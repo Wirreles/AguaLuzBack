@@ -1,0 +1,11 @@
+{
+        "email": "mugiwara123@gmail.com",
+        "name": "Monkey D Luffy",
+        "password": "C@rne100",
+        "confirmPassword": "C@rne100",
+        "address": "Thousand Sunny",
+        "phone": 1234567890,
+        "country": "GOA",
+        "city": "Foosha Village",
+        "isAdmin": "admin"      
+}
