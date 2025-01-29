@@ -11,9 +11,12 @@ import { CategoriesModule } from './Modules/categories/categories.module';
 import { OrdersModule } from './Modules/orders/orders.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SeederModule } from './Modules/seeder/seeder.module';
-
+import { RealtimeGateway } from './realtime/realtime.gateway';
+import { logger } from '../src/common/logger';
+import { WinstonModule } from 'nest-winston';
 @Module({
   imports: [
+    WinstonModule.forRoot(logger),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeOrm]
@@ -32,6 +35,6 @@ import { SeederModule } from './Modules/seeder/seeder.module';
     })
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RealtimeGateway],
 })
 export class AppModule {}

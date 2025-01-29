@@ -1,0 +1,17 @@
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+  const socket = io('http://localhost:3000');  
+
+  socket.on('connect', () => {
+    console.log('Conectado al servidor WebSocket');
+
+    socket.on('repartidor_actualizado', (data) => {
+      console.log('Repartidor actualizado:', data);
+    });
+
+    socket.emit('mensaje', { msg: 'Hola desde el cliente' });
+  });
+</script>
+
+
+Conectar un cliente Web para pruebas
