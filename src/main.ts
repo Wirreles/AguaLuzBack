@@ -4,9 +4,11 @@ import { LoggerGlobalMiddleware } from './middlewares/logger';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+
+
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   app.use(LoggerGlobalMiddleware);
   app.useGlobalPipes(
     new ValidationPipe({
