@@ -1,22 +1,20 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductsModule } from './Modules/products/products.module';
 import { AuthModule } from './Modules/auth/auth.module';
-import { UsersModule } from './Modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeOrm from './config/database.confing'
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CategoriesModule } from './Modules/categories/categories.module';
-import { OrdersModule } from './Modules/orders/orders.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SeederModule } from './Modules/seeder/seeder.module';
 import { RealtimeGateway } from './realtime/realtime.gateway';
-import { logger } from '../src/common/logger';
-import { WinstonModule } from 'nest-winston';
+import { ClientesModule } from './Modules/clients/clients.module';
+import { ZonasModule } from './Modules/zones/zonas.module';
+import { RepartidoresModule } from './Modules/repartidores/repartidores.module';
+import { RealtimeModule } from './realtime/realtime.module';
+
 @Module({
   imports: [
-    WinstonModule.forRoot(logger),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeOrm]
@@ -26,8 +24,9 @@ import { WinstonModule } from 'nest-winston';
       useFactory:(configService: ConfigService)=>
         configService.get('typeorm')
     }),
-    ProductsModule, AuthModule, UsersModule, 
-    CategoriesModule, OrdersModule, SeederModule,
+    AuthModule, ZonasModule, 
+    RepartidoresModule, RealtimeModule, 
+    SeederModule, ClientesModule,
     JwtModule.register({
       global:true,
       signOptions:{expiresIn: '1h'},
@@ -35,6 +34,8 @@ import { WinstonModule } from 'nest-winston';
     })
   ],
   controllers: [AppController],
-  providers: [AppService, RealtimeGateway],
+  providers: [AppService, 
+    RealtimeGateway 
+  ],
 })
 export class AppModule {}

@@ -1,20 +1,45 @@
-import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ cors: true })  
+@WebSocketGateway({ cors: true })
 export class RealtimeGateway {
   @WebSocketServer()
   server: Server;
 
-  // Escucha el evento 'mensaje' que envían los clientes
-  @SubscribeMessage('mensaje')
-  handleMessage(@MessageBody() data: any): void {
-    console.log('Mensaje recibido:', data);
-    this.server.emit('mensaje', data); // Reenvía el mensaje a todos los clientes conectados
+  // Mapeo de usuarios y sus sockets
+  private userSockets: Map<string, string> = new Map();
+
+  // Registrar usuarios al conectarse
+  handleConnection(client: Socket) {
+    console.log('Cliente conectado:', client.id);
   }
 
-  // Método para enviar eventos desde otros servicios
-  sendUpdate(event: string, data: any) {
-    this.server.emit(event, data);
+  // Manejar desconexión
+  handleDisconnect(client: Socket) {
+    console.log('Cliente desconectado:', client.id);
+    this.userSockets.forEach((socketId, userId) => {
+      if (socketId === client.id) {
+        this.userSockets.delete(userId);
+      }
+    });
+  }
+
+  // Registrar usuarios con su ID único
+  @SubscribeMessage('registerUser')
+  registerUser(@MessageBody() data: { userId: string }, @ConnectedSocket() client: Socket): void {
+    this.userSockets.set(data.userId, client.id);
+    console.log('Usuario registrado:', data.userId, 'Socket:', client.id);
+  }
+
+  // Manejar actualizaciones de ubicación
+  @SubscribeMessage('updateLocation')
+  handleLocationUpdate(
+    @MessageBody() locationData: { userId: string; lat: number; lng: number },
+    @ConnectedSocket() client: Socket,
+  ): void {
+    console.log('Ubicación actualizada por:', locationData.userId, locationData);
+
+    // Reenviar la ubicación a todos los clientes que necesitan recibirla
+    this.server.emit('locationUpdate', locationData);
   }
 }

@@ -3,18 +3,10 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import Repartidores from '../../entities/repartidores.entity';
 import { RealtimeGateway } from 'src/realtime/realtime.gateway';
-import { logger } from 'src/common/logger'; 
-
-
 
 
 @Injectable()
 export class RepartidoresService {
-
-
-     private readonly logger = new Logger(RepartidoresService.name);
-
-
 
   constructor(
     @InjectRepository(Repartidores)
@@ -26,15 +18,12 @@ export class RepartidoresService {
 
 
   async getRepartidores(): Promise<Repartidores[]> {
-        this.logger.log('Obteniendo todos los repartidores');
-
      
     const repartidores = await this.repartidoresRepository.find({
       relations: ['pedidos'], 
     });
     if (repartidores.length === 0) {
-            this.logger.warn('No hay repartidores registrados');
-
+   
       throw new NotFoundException('No hay repartidores registrados.');
     }
     return repartidores;
@@ -68,7 +57,7 @@ async updateRepartidor(id: string, repartidorData: any) {
   }
 
   async deleteRepartidor(id: string): Promise<void> {
-        this.logger.warn(`Eliminando repartidor con ID: ${id}`);
+    
     const repartidor = await this.getRepartidorById(id);
     await this.repartidoresRepository.remove(repartidor);
   }

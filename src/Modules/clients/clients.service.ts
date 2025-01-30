@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import Clientes from '../../entities/clientes.entity';
@@ -32,21 +37,50 @@ export class ClientesService {
   }
 
   async createCliente(clienteData: Partial<Clientes>): Promise<Clientes> {
-    const cliente = this.clientesRepository.create(clienteData);
-    return this.clientesRepository.save(cliente);
+    try {
+      // Validación previa (opcional)
+      if (!clienteData.nombre || !clienteData.telefono) {
+        throw new BadRequestException(
+          'El nombre y el teléfono son obligatorios.',
+        );
+      }
+
+      const cliente = this.clientesRepository.create(clienteData);
+      return await this.clientesRepository.save(cliente);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error; // Lanza BadRequestException si es una validación.
+      }
+      // Lanza una excepción interna para otros errores.
+      throw new InternalServerErrorException(
+        'Ocurrió un error al crear el cliente. Verifica los datos ingresados.',
+      );
+    }
   }
 
   async updateCliente(
     id: string,
     clienteData: Partial<Clientes>,
   ): Promise<Clientes> {
-    const cliente = await this.getClienteById(id);
-    Object.assign(cliente, clienteData);
-    return this.clientesRepository.save(cliente);
+    try {
+      const cliente = await this.getClienteById(id);
+      Object.assign(cliente, clienteData);
+      return await this.clientesRepository.save(cliente);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Ocurrió un error al actualizar el cliente. Verifica los datos ingresados.',
+      );
+    }
   }
 
   async deleteCliente(id: string): Promise<void> {
-    const cliente = await this.getClienteById(id);
-    await this.clientesRepository.remove(cliente);
+    try {
+      const cliente = await this.getClienteById(id);
+      await this.clientesRepository.remove(cliente);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Ocurrió un error al eliminar el cliente. Verifica el ID proporcionado.',
+      );
+    }
   }
 }
