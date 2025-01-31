@@ -42,4 +42,14 @@ export class RealtimeGateway {
     // Reenviar la ubicación a todos los clientes que necesitan recibirla
     this.server.emit('locationUpdate', locationData);
   }
+
+
+  @SubscribeMessage('sendMessage')
+  handleMessage(
+    @MessageBody() data: { user: string; message: string },
+    @ConnectedSocket() client: Socket,
+  ): void {
+    console.log(`Mensaje recibido de ${data.user}: ${data.message}`);
+    this.server.emit('receiveMessage', data); // Reenvía el mensaje a todos los clientes
+  }
 }

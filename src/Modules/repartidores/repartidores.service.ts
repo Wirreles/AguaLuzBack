@@ -51,7 +51,7 @@ async updateRepartidor(id: string, repartidorData: any) {
     await this.repartidoresRepository.save(updatedRepartidor);
 
     // Notificar a los clientes en tiempo real
-    this.realtimeGateway.sendUpdate('repartidor_actualizado', updatedRepartidor);
+    // this.realtimeGateway.sendUpdate('repartidor_actualizado', updatedRepartidor); 
 
     return updatedRepartidor;
   }
