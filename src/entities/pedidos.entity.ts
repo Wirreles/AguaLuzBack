@@ -77,9 +77,10 @@ class Pedidos {
   /**
    * Repartidor asignado al pedido
    */
-  @ManyToOne(() => Repartidores, (repartidor) => repartidor.pedidos)
+  @ManyToOne(() => Repartidores, (repartidor) => repartidor.pedidos, { nullable: true })
   @JoinColumn({ name: "idRepartidor" })
   repartidor: Repartidores;
+
 
   /**
    * Indica con cuánto dinero pagará el cliente

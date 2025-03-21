@@ -11,6 +11,8 @@ import { ClientesModule } from './Modules/clients/clients.module';
 import { ZonasModule } from './Modules/zones/zonas.module';
 import { RepartidoresModule } from './Modules/repartidores/repartidores.module';
 import { RealtimeModule } from './realtime/realtime.module';
+import { WebhookModule } from './Modules/webhook/webhook.module';
+import { PedidosModule } from './Modules/pedidos/pedidos.module';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { RealtimeModule } from './realtime/realtime.module';
     // AuthModule, 
      ZonasModule, 
     RepartidoresModule, RealtimeModule, 
-    ClientesModule,
+    ClientesModule, WebhookModule, PedidosModule,
     JwtModule.register({
       global:true,
       signOptions:{expiresIn: '1h'},
